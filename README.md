@@ -183,9 +183,3 @@ uvicorn api:app --host 127.0.0.1 --port 8000
 
 ---
 
-## 🔮 Future Improvements (If Given More Time)
-
-1. **Vector Embedding Retriever**: Incorporate local vector embeddings (e.g. `sentence-transformers` / Faiss) for semantic schema search on 10,000+ column enterprise warehouses.
-2. **Natural Language Visualization Engine**: Automatically synthesize interactive Vega-Lite / Plotly chart specifications alongside tabular results.
-3. **Auto-Correction Multi-turn Agent**: If execution fails on a dirty dataset, an autonomous reflection loop iteratively inspects error tracebacks and repairs the logic.
-4. **Data Drift & Anomaly Alerts**: Integrated distribution monitoring to alert analysts when query results deviate significantly from expected historical bounds.
