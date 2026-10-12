@@ -1,0 +1,7 @@
+feedback_id,timestamp,query,generated_logic,user_rating,corrected_logic,notes
+FB-001,2026-10-13T00:54:18.156458,Total sales in India for March,df[(df['country'] == 'India') & (df['month'] == '2024-03')]['revenue'].sum(),5,,Accurate mapping of sales->revenue and March->2024-03 verified by analyst
+FB-002,2026-10-13T00:54:18.156458,Which region missed target in February,merged[merged['revenue'] < merged['target_revenue']],5,JOIN targets on region and filter month='2024-02',Ensure left join targets with sales and compare revenue < target_revenue
+FB-20261013005805,2026-10-13T00:58:05.980791,Total revenue in India for March,df[(df['country'] == 'India') & (df['month'] == '2024-03')]['revenue'].sum(),5,,Verified test feedback entry
+FB-20261013005941,2026-10-13T00:59:41.342354,Total revenue in India for March,df[(df['country'] == 'India') & (df['month'] == '2024-03')]['revenue'].sum(),5,,Verified test feedback entry
+FB-20261013010149,2026-10-13T01:01:49.331599,Total revenue in India for March,df[(df['country'] == 'India') & (df['month'] == '2024-03')]['revenue'].sum(),5,,Verified test feedback entry
+FB-20261013010444,2026-10-13T01:04:44.811108,Total revenue in India for March,df[(df['country'] == 'India') & (df['month'] == '2024-03')]['revenue'].sum(),5,,Verified test feedback entry

@@ -1,0 +1,143 @@
+[
+  {
+    "query": "Total sales in India for March",
+    "generated_logic": "df[(df['country'] == 'India') & (df['month'] == '2024-03')]['revenue'].sum()",
+    "result": 108.0,
+    "confidence_score": 1.0,
+    "explanation": "Understood query as an aggregate calculation of 'revenue' filtered by country = 'India', month = '2024-03'. Computed using metric definition (quantity * unit_price * (1 - discount)). Applied sum reduction over matching transactional rows in sales dataset. Feedback alignment: Calibrated using historical feedback entry (Accurate mapping of sales->revenue and March->2024-03 verified by analyst)."
+  },
+  {
+    "query": "Top 2 cities by profit",
+    "generated_logic": "df.groupby('city')['profit'].sum().reset_index().sort_values(by='profit', ascending=False).head(2)",
+    "result": [
+      {
+        "city": "New York",
+        "profit": 200
+      },
+      {
+        "city": "San Francisco",
+        "profit": 180
+      }
+    ],
+    "confidence_score": 0.99,
+    "explanation": "Understood query as a top 2 ranking across 'city' sorted by profit. Grouped dataset by 'city', summed 'profit' (profit), sorted in descending order, and extracted top 2 records."
+  },
+  {
+    "query": "Average order value by region",
+    "generated_logic": "(df.groupby('region')['revenue'].sum() / df.groupby('region')['order_id'].nunique()).reset_index(name='avg_order_value')",
+    "result": [
+      {
+        "region": "APAC",
+        "avg_order_value": 118.5
+      },
+      {
+        "region": "EMEA",
+        "avg_order_value": 799.33
+      },
+      {
+        "region": "NA",
+        "avg_order_value": 1087.47
+      }
+    ],
+    "confidence_score": 0.99,
+    "explanation": "Understood query as Average Order Value (AOV) grouped by 'region'. Mapped AOV to formula (total revenue / distinct orders). Grouped by 'region' and calculated ratio of revenue sum to order_id count."
+  },
+  {
+    "query": "Which region missed its target in Feb?",
+    "generated_logic": "sales_m = df[df['month'] == '2024-02'].groupby('region')['revenue'].sum().reset_index()\ntargets_m = targets[targets['month'] == '2024-02']\nmerged = pd.merge(targets_m, sales_m, on='region', how='left').fillna({'revenue': 0})\nmerged[merged['revenue'] < merged['target_revenue']][['region', 'revenue', 'target_revenue']]",
+    "result": [
+      {
+        "region": "APAC",
+        "revenue": 75.0,
+        "target_revenue": 6000
+      },
+      {
+        "region": "EMEA",
+        "revenue": 255.0,
+        "target_revenue": 7500
+      },
+      {
+        "region": "NA",
+        "revenue": 1116.0,
+        "target_revenue": 9500
+      }
+    ],
+    "confidence_score": 0.99,
+    "explanation": "Understood query as a target attainment evaluation for 2024-02. Aggregated actual revenue from sales dataset for 2024-02, performed a LEFT JOIN with targets dataset on 'region', and identified regions where actual revenue was below target revenue."
+  },
+  {
+    "query": "Sales contribution % by category",
+    "generated_logic": "cat_sales = df.groupby('product_category')['revenue'].sum().reset_index()\ncat_sales['contribution_pct'] = (cat_sales['revenue'] / df['revenue'].sum()) * 100\ncat_sales.sort_values(by='contribution_pct', ascending=False)",
+    "result": [
+      {
+        "product_category": "Technology",
+        "revenue": 5402.0,
+        "contribution_pct": 88.06
+      },
+      {
+        "product_category": "Furniture",
+        "revenue": 579.0,
+        "contribution_pct": 9.44
+      },
+      {
+        "product_category": "Office Supplies",
+        "revenue": 153.4,
+        "contribution_pct": 2.5
+      }
+    ],
+    "confidence_score": 0.99,
+    "explanation": "Understood query as a percentage contribution analysis of sales by 'product_category'. Calculated total dataset revenue, grouped revenue by 'product_category', and computed each category's percentage share: (category revenue / grand total revenue) * 100."
+  },
+  {
+    "query": "Top product in each region",
+    "generated_logic": "prod_agg = df.groupby(['region', 'product_name'])['revenue'].sum().reset_index()\nprod_agg['rank'] = prod_agg.groupby('region')['revenue'].rank(method='first', ascending=False)\nprod_agg[prod_agg['rank'] <= 1][['region', 'product_name', 'revenue']]",
+    "result": [
+      {
+        "region": "APAC",
+        "product_name": "Ergo Chair",
+        "revenue": 324.0
+      },
+      {
+        "region": "EMEA",
+        "product_name": "Samsung Galaxy",
+        "revenue": 1288.0
+      },
+      {
+        "region": "NA",
+        "product_name": "Dell XPS",
+        "revenue": 2068.0
+      }
+    ],
+    "confidence_score": 0.99,
+    "explanation": "Understood query as a ranked window function: finding top product_name within each region. Grouped data by ('region', 'product_name'), calculated revenue, and applied a window ranking (ROW_NUMBER / rank) partitioned by 'region' descending by revenue, filtering for rank = 1."
+  },
+  {
+    "query": "YoY growth in revenue",
+    "generated_logic": "yearly_rev = df.groupby('year')['revenue'].sum()\nyearly_rev.pct_change()",
+    "result": {
+      "2024": "Baseline / N/A (no prior period in dataset)"
+    },
+    "confidence_score": 0.97,
+    "explanation": "Understood query as a Year-over-Year (YoY) revenue growth calculation: ((Current Year - Prior Year) / Prior Year). Extracted year from order dates and summed revenue per year. Note: The dataset contains only 2024 orders, establishing a baseline revenue ($6,134.40). Prior calendar year (2023) is absent from the dataset, so percentage change baseline cannot be computed."
+  },
+  {
+    "query": "Revenue of top 3 customers per region",
+    "generated_logic": "cust_agg = df.groupby(['region', 'customer_id'])['revenue'].sum().reset_index()\ncust_agg['rank'] = cust_agg.groupby('region')['revenue'].rank(method='first', ascending=False)\ntop_n = cust_agg[cust_agg['rank'] <= 3]\ntop_n.groupby('region')['revenue'].sum().reset_index()",
+    "result": [
+      {
+        "region": "APAC",
+        "revenue": 474.0
+      },
+      {
+        "region": "EMEA",
+        "revenue": 2398.0
+      },
+      {
+        "region": "NA",
+        "revenue": 3262.4
+      }
+    ],
+    "confidence_score": 0.99,
+    "explanation": "Understood query as a nested analytical pipeline: Revenue of top 3 customer_ids per region. Step 1: Grouped transactions by ('region', 'customer_id') to find customer revenue. Step 2: Applied partition ranking per 'region' to filter the top 3 customers. Step 3: Aggregated the revenue of those top 3 customers grouped by 'region'."
+  }
+]
